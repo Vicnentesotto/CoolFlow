@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cool Flow | Immersive Music Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00c6ff;
+            --secondary: #0072ff;
+            --dark: #0f0f0f;
+            --light: #ffffff;
+            --glass: rgba(255, 255, 255, 0.1);
+            --youtube: #ff0000;
+            --facebook: #1877f2;
+            --tiktok: #000000;
+            --tiktok-text: #69c9d0;
+            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            min-height: 100vh;
+            scroll-behavior: smooth;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        /* 3D Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        /* Main Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 0.5s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Header with Sticky Effect */
+        header {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding: 1.5rem 2rem;
+            background: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 198, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        /* Animated Logo */
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 15px rgba(0, 198, 255, 0.4);
+            position: relative;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            text-shadow: 0 5px 20px rgba(0, 198, 255, 0.6);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            position: relative;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover::before {
+            opacity: 1;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 20px rgba(0, 198, 255, 0.5);
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            min-height: 100vh;
+            padding: 4rem 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: var(--transition);
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 10vh 0;
+            position: relative;
+        }
+
+        .hero h2 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--light), #e0e0e0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .social-link {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-link:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .social-link.youtube {
+            background: var(--youtube);
+        }
+
+        .social-link.facebook {
+            background: var(--facebook);
+        }
+
+        .social-link.tiktok {
+            background: var(--tiktok);
+            color: var(--tiktok-text);
+        }
+
+        /* YouTube Button */
+        .yt-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--youtube);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .yt-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.5);
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .video-card {
+            background: rgba(0, 198, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 198, 255, 0.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 198, 255, 0.3);
+        }
+
+        .video-card iframe {
+            width: 100%;
+            height: 220px;
+            border: none;
+            display: block;
+        }
+
+        .video-info {
+            padding: 1.8rem;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .video-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* About Section */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3.5rem;
+            background: rgba(0, 198, 255, 0.05);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 198, 255, 0.1);
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Audio Player */
+        .audio-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+            border-top: 1px solid rgba(0, 198, 255, 0.3);
+            transform: translateY(100%);
+            transition: transform 0.5s ease;
+        }
+
+        .audio-player.visible {
+            transform: translateY(0);
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            width: 100%;
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.3);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .track-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mute-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.6rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .audio-player {
+                padding: 1rem;
+            }
+
+            .play-btn {
+                width: 50px;
+                height: 50px;
+            }
+
+            .about-content {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .nav-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .social-link {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .yt-btn {
+                padding: 1rem 2rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-logo {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 2rem;
+        }
+
+        .loader-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loader-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-logo">Cool Flow</div>
+        <div class="loader-bar">
+            <div class="loader-progress" id="loader-progress"></div>
+        </div>
+    </div>
+
+    <!-- 3D Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="container">
+        <header id="main-header">
+            <h1 class="logo">Cool Flow</h1>
+            <nav>
+                <button class="nav-btn active" data-section="home">Home</button>
+                <button class="nav-btn" data-section="videos">Videos</button>
+                <button class="nav-btn" data-section="about">About</button>
+            </nav>
+        </header>
+
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h2>Experience <span class="gradient-text">Cool Flow</span></h2>
+                <p>Immerse yourself in the unique soundscapes created by Cool Flow. Discover the latest tracks, videos, and more from this innovative artist.</p>
+                <a href="https://www.youtube.com/@coolflow27" target="_blank" class="yt-btn">
+                    <i class="fab fa-youtube"></i> Visit YouTube Channel
+                </a>
+                
+                <div class="social-links">
+                    <a href="https://www.facebook.com/CoolFlow27" target="_blank" class="social-link facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@cool.flow" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Videos Section -->
+        <section id="videos" class="section">
+            <h2 class="section-title">Latest <span class="gradient-text">Videos</span></h2>
+            <div class="video-grid">
+                <div class="video-card">
+                   <iframe width="560" height="315" src="https://www.youtube.com/embed/uzgveTPOT5o?si=Pq_fR7OH_sEKaYOq" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool FLow - Heaven Knows by Orange and Lemons | Cool Flow cover</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                   <iframe width="560" height="315" src="https://www.youtube.com/embed/1dXkhGCRPXw?si=l4ab3gQaf6UiJQpE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool FLow - When I Was Your Man | Bruno Mars | Bernard Larido cover</h3>
+                        <p>Official Music Video</p>
+                    </div>
+
+                </div>
+                <div class="video-card">
+                   <iframe width="560" height="315" src="https://www.youtube.com/embed/BzFd-FjVKWU?si=uIkp4OCJbjMvbs2X" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool FLow - So Far Away (Bamboo Version) | Cool Flow Cover</h3>
+                        <p>Official Music Video</p>
+                    </div>
+
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/e5qrTOu6bU0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool Flow - What If I Told You That I Love You | Ali Gatie | Brixx cover #coolflow #cover #aligatie</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/sL5NZSae1rg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool Flow - You Are The Reason | Calum Scott | Bernard Larido Cover</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/P06jNVR43zY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool Flow - She was mine by AJ Rafael | Coolflow cover
+</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <h2 class="section-title">About <span class="gradient-text">Cool Flow</span></h2>
+            <div class="about-content">
+                <p>Cool Flow is an innovative music creator specializing in unique soundscapes and atmospheric compositions. With a growing following on YouTube, Cool Flow continues to push boundaries in electronic music.</p>
+                <p>The channel features a mix of original compositions, creative remixes, and immersive audio experiences that transport listeners to new dimensions.</p>
+                
+                <div class="social-links" style="margin-top: 3rem;">
+                    <a href="https://www.youtube.com/@coolflow27" target="_blank" class="social-link youtube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://www.facebook.com/CoolFlow27" target="_blank" class="social-link facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@cool.flow" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Audio Player -->
+    <div class="audio-player" id="audio-player">
+        <div class="player-controls">
+            <button class="play-btn"><i class="fas fa-play"></i></button>
+            <div class="track-info">
+                <div class="track-name">Cool Flow - Background Mix</div>
+                <div class="track-artist">Click play to start music</div>
+            </div>
+            <button class="mute-btn">
+                <i class="fas fa-volume-mute"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- YouTube Player Container -->
+    <div id="youtube-player"></div>
+
+    <script>
+        // 3D Background using Three.js
+        function init3DBackground() {
+            const canvas = document.getElementById('bg-canvas');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Set canvas size
+            canvas.width = width;
+            canvas.height = height;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Create particles
+            const particles = [];
+            const particleCount = Math.floor(width * height / 10000);
+            const colors = ['#00c6ff', '#0072ff', '#ff00e4', '#00ffaa', '#ffcc00'];
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 3 + 1,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedX: Math.random() * 2 - 1,
+                    speedY: Math.random() * 2 - 1,
+                    opacity: Math.random() * 0.5 + 0.1
+                });
+            }
+            
+            // Mouse position
+            let mouseX = width / 2;
+            let mouseY = height / 2;
+            
+            // Handle mouse movement
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+            
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                
+                // Update and draw particles
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    
+                    // Move particles
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    
+                    // Bounce off edges
+                    if (p.x < 0 || p.x > width) p.speedX *= -1;
+                    if (p.y < 0 || p.y > height) p.speedY *= -1;
+                    
+                    // React to mouse
+                    const dx = mouseX - p.x;
+                    const dy = mouseY - p.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 100) {
+                        const angle = Math.atan2(dy, dx);
+                        const force = (100 - distance) / 100;
+                        p.x -= Math.cos(angle) * force * 5;
+                        p.y -= Math.sin(angle) * force * 5;
+                    }
+                    
+                    // Draw particle
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fill();
+                }
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Improved loading experience
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize 3D background
+            init3DBackground();
+            
+            // Simulate loading progress
+            const loader = document.getElementById('loader');
+            const loaderProgress = document.getElementById('loader-progress');
+            const body = document.body;
+            
+            let progress = 0;
+            const loadingInterval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(loadingInterval);
+                    
+                    // Hide loader and show content
+                    setTimeout(() => {
+                        loader.classList.add('hidden');
+                        body.classList.add('loaded');
+                        
+                        // Initialize the rest of the page
+                        initPage();
+                    }, 500);
+                }
+                loaderProgress.style.width = `${progress}%`;
+            }, 200);
+        });
+
+        function initPage() {
+            // Navigation
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const sections = document.querySelectorAll('.section');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+                    
+                    button.classList.add('active');
+                    const sectionId = button.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // Smooth scroll to top of section
+                    window.scrollTo({
+                        top: document.getElementById(sectionId).offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Sticky header effect
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // YouTube Player API
+            let player;
+            let isPlaying = false;
+            let isMuted = true;
+
+            // Load YouTube API script
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            // Called when YouTube API is ready
+            window.onYouTubeIframeAPIReady = function() {
+                player = new YT.Player('youtube-player', {
+                    height: '0',
+                    width: '0',
+                    videoId: '1dXkhGCRPXw',
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 0,
+                        'disablekb': 1,
+                        'fs': 0,
+                        'loop': 1,
+                        'modestbranding': 1,
+                        'playlist': '1dXkhGCRPXw'
+                    },
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            };
+
+            function onPlayerReady(event) {
+                // Player is ready, enable controls
+                document.querySelector('.play-btn').disabled = false;
+                document.getElementById('audio-player').classList.add('visible');
+                
+                // Start muted to comply with autoplay policies
+                event.target.mute();
+                isMuted = true;
+                document.querySelector('.mute-btn').innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+
+            function onPlayerStateChange(event) {
+                updatePlayerState();
+            }
+
+            function updatePlayerState() {
+                const playBtn = document.querySelector('.play-btn');
+                const muteBtn = document.querySelector('.mute-btn');
+                
+                if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                    isPlaying = true;
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    document.querySelector('.track-artist').textContent = "Now Playing";
+                } else {
+                    isPlaying = false;
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    document.querySelector('.track-artist').textContent = "Paused";
+                }
+                
+                if (player.isMuted()) {
+                    isMuted = true;
+                    muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                } else {
+                    isMuted = false;
+                    muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                }
+            }
+
+            // Play/Pause control
+            document.querySelector('.play-btn').addEventListener('click', () => {
+                if (isPlaying) {
+                    player.pauseVideo();
+                } else {
+                    player.playVideo();
+                    // First play interaction unmutes by default
+                    if (isMuted) {
+                        player.unMute();
+                        isMuted = false;
+                        document.querySelector('.mute-btn').innerHTML = '<i class="fas fa-volume-up"></i>';
+                    }
+                }
+                updatePlayerState();
+            });
+
+            // Mute/Unmute control
+            document.querySelector('.mute-btn').addEventListener('click', () => {
+                if (isMuted) {
+                    player.unMute();
+                    isMuted = false;
+                    document.querySelector('.mute-btn').innerHTML = '<i class="fas fa-volume-up"></i>';
+                } else {
+                    player.mute();
+                    isMuted = true;
+                    document.querySelector('.mute-btn').innerHTML = '<i class="fas fa-volume-mute"></i>';
+                }
+            });
+
+            // Enable audio controls after first user interaction
+            document.body.addEventListener('click', function initAudio() {
+                document.querySelector('.play-btn').disabled = false;
+                document.body.removeEventListener('click', initAudio);
+            }, { once: true });
+        }
+    </script>
+</body>
+</html>
