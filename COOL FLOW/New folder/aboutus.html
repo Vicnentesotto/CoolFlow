@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Cool Flow | Immersive Music Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary: #00c6ff;
+            --secondary: #0072ff;
+            --dark: #0f0f0f;
+            --light: #ffffff;
+            --glass: rgba(255, 255, 255, 0.1);
+            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            color: var(--light);
+            background: var(--dark);
+        }
+
+        /* Navigation Bar */
+        header {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 198, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            position: relative;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover::before {
+            opacity: 1;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        /* 3D Background */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .about-header {
+            text-align: center;
+            padding: 4rem 0;
+            backdrop-filter: blur(5px);
+        }
+
+        .about-header h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        /* Sections */
+        .about-section {
+            background: rgba(0, 198, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(0, 198, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .about-section:hover {
+            border-color: rgba(0, 198, 255, 0.3);
+        }
+
+        .about-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Team Grid */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .team-member {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(0, 198, 255, 0.1);
+        }
+
+        .team-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 198, 255, 0.2);
+            border-color: rgba(0, 198, 255, 0.3);
+        }
+
+        .member-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1rem;
+            border: 3px solid rgba(0, 198, 255, 0.3);
+        }
+
+        .member-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+            transition: var(--transition);
+        }
+
+        .member-name:hover {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .member-role {
+            color: var(--light);
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .about-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-btn {
+                padding: 0.6rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <a href="index.html" class="logo">Cool Flow</a>
+        <nav>
+            <a href="Index.html" class="nav-btn">Home</a>
+            <a href="videos.html" class="nav-btn">Videos</a>
+            <a href="about.html" class="nav-btn active">About</a>
+        </nav>
+    </header>
+
+    <!-- 3D Background -->
+    <div id="canvas-container"></div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <header class="about-header">
+            <h1>About Cool Flow</h1>
+            <p>The creative collective behind immersive electronic experiences</p>
+        </header>
+
+        <section class="about-section">
+            <h2>Our Story</h2>
+            <p>Founded in 2018, Cool Flow emerged from a shared passion for boundary-pushing electronic music. What began as late-night studio sessions between classmates evolved into a genre-defying collective known for immersive sound design and hypnotic rhythms.</p>
+        </section>
+
+        <section class="about-section">
+            <h2>Meet The Team</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="https://source.unsplash.com/random/300x300/?producer,portrait" alt="Alex" class="member-image">
+                    <h3 class="member-name">Alex Rivera</h3>
+                    <p class="member-role">Founder & Producer</p>
+                    <p>Blends classical training with electronic innovation to create Cool Flow's signature sound.</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://source.unsplash.com/random/300x300/?music-producer,portrait" alt="Jamie" class="member-image">
+                    <h3 class="member-name">Jamie Chen</h3>
+                    <p class="member-role">Sound Designer</p>
+                    <p>Crafts the immersive three-dimensional soundscapes that define our audio experiences.</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://source.unsplash.com/random/300x300/?dj,portrait" alt="Taylor" class="member-image">
+                    <h3 class="member-name">Taylor Smith</h3>
+                    <p class="member-role">Visual Artist</p>
+                    <p>Translates our audio journeys into stunning visual accompaniments and live show visuals.</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://source.unsplash.com/random/300x300/?music-director,portrait" alt="Dylan" class="member-image">
+                    <h3 class="member-name">Dylan Park</h3>
+                    <p class="member-role">Creative Director</p>
+                    <p>Ensures every project maintains our signature aesthetic while pushing creative boundaries.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <h2>Our Philosophy</h2>
+            <p>We believe music should transport you. Our three core principles:</p>
+            <ul style="line-height: 2; padding-left: 1.5rem;">
+                <li><strong>Innovation</strong> - Constantly evolving our sound</li>
+                <li><strong>Immersion</strong> - Creating complete sensory experiences</li>
+                <li><strong>Community</strong> - Growing with our listeners</li>
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        // Initialize Three.js 3D Background
+        function init3DBackground() {
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ 
+                alpha: true, 
+                antialias: true 
+            });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+            
+            // Create floating particles
+            const particles = [];
+            const particleCount = 12;
+            const colors = [0x00c6ff, 0x0072ff, 0xffffff];
+            
+            for (let i = 0; i < particleCount; i++) {
+                const size = Math.random() * 0.2 + 0.1;
+                const geometry = new THREE.IcosahedronGeometry(size, 1);
+                const material = new THREE.MeshBasicMaterial({ 
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.15
+                });
+                
+                const particle = new THREE.Mesh(geometry, material);
+                particle.position.set(
+                    Math.random() * 20 - 10,
+                    Math.random() * 20 - 10,
+                    Math.random() * 20 - 10
+                );
+                
+                particle.userData = {
+                    speed: Math.random() * 0.002 + 0.001,
+                    rotationSpeed: Math.random() * 0.01 + 0.005
+                };
+                
+                scene.add(particle);
+                particles.push(particle);
+            }
+            
+            camera.position.z = 5;
+            
+            // Mouse movement interaction
+            const mouse = new THREE.Vector2();
+            const target = new THREE.Vector2();
+            const windowHalf = new THREE.Vector2(
+                window.innerWidth / 2, 
+                window.innerHeight / 2
+            );
+            
+            document.addEventListener('mousemove', (e) => {
+                mouse.x = (e.clientX - windowHalf.x) * 0.0005;
+                mouse.y = (e.clientY - windowHalf.y) * 0.0005;
+            });
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                target.x += (mouse.x - target.x) * 0.05;
+                target.y += (mouse.y - target.y) * 0.05;
+                
+                camera.position.x += (target.x * 10 - camera.position.x) * 0.1;
+                camera.position.y += (-target.y * 10 - camera.position.y) * 0.1;
+                camera.lookAt(scene.position);
+                
+                particles.forEach(particle => {
+                    particle.rotation.x += particle.userData.rotationSpeed;
+                    particle.rotation.y += particle.userData.rotationSpeed;
+                    particle.position.z += particle.userData.speed;
+                    
+                    if (particle.position.z > 10) {
+                        particle.position.z = -10;
+                    }
+                });
+                
+                renderer.render(scene, camera);
+            }
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            animate();
+        }
+        
+        // Initialize everything when DOM loads
+        document.addEventListener('DOMContentLoaded', () => {
+            init3DBackground();
+            
+            // Set active nav button based on current page
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const btnPage = btn.getAttribute('href');
+                if (btnPage === currentPage) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

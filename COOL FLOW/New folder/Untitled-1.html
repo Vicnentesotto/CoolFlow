@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cool Flow | Immersive Music Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00c6ff;
+            --secondary: #0072ff;
+            --dark: #0f0f0f;
+            --light: #ffffff;
+            --glass: rgba(255, 255, 255, 0.1);
+            --youtube: #ff0000;
+            --facebook: #1877f2;
+            --tiktok: #000000;
+            --tiktok-text: #69c9d0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark), #1a1a1a);
+            color: var(--light);
+            overflow-x: hidden;
+            min-height: 100vh;
+            scroll-behavior: smooth;
+        }
+
+        /* Animated Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(circle at center, #121212 0%, #000000 100%);
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            animation: float linear infinite;
+            opacity: 0;
+            filter: drop-shadow(0 0 8px currentColor);
+            will-change: transform;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-20vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Main Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 0.5s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Header with Sticky Effect */
+        header {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding: 1.5rem 2rem;
+            background: rgba(15, 15, 15, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 198, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        header.scrolled {
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        /* Animated Logo */
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 15px rgba(0, 198, 255, 0.4);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            text-shadow: 0 5px 20px rgba(0, 198, 255, 0.6);
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.4s ease;
+        }
+
+        .logo:hover::after {
+            width: 100%;
+        }
+
+        /* Navigation with Hover Effects */
+        nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            position: relative;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+        }
+
+        .nav-btn:hover::before {
+            opacity: 1;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 20px rgba(0, 198, 255, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .nav-btn.active:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Sections with Parallax Effect */
+        .section {
+            display: none;
+            min-height: 100vh;
+            padding: 4rem 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Section with Typing Animation */
+        .hero {
+            text-align: center;
+            padding: 10vh 0;
+            position: relative;
+        }
+
+        .hero h2 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--light), #e0e0e0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+
+        /* Social Links with Colorful Hover Effects */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .social-link {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-8px) scale(1.1);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .social-link:hover::before {
+            transform: translateX(100%);
+        }
+
+        .social-link.youtube {
+            background: var(--youtube);
+        }
+
+        .social-link.facebook {
+            background: var(--facebook);
+        }
+
+        .social-link.tiktok {
+            background: var(--tiktok);
+            color: var(--tiktok-text);
+        }
+
+        /* YouTube Button with Pulse Effect */
+        .yt-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--youtube);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .yt-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .yt-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 0, 0, 0.5);
+        }
+
+        .yt-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        /* Video Grid with 3D Hover Effect */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+            perspective: 1000px;
+        }
+
+        .video-card {
+            background: rgba(0, 198, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 198, 255, 0.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transform-style: preserve-3d;
+        }
+
+        .video-card:hover {
+            transform: translateY(-15px) rotateX(5deg) rotateY(5deg) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 198, 255, 0.3);
+        }
+
+        .video-card iframe {
+            width: 100%;
+            height: 220px;
+            border: none;
+            display: block;
+        }
+
+        .video-info {
+            padding: 1.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .video-card:hover .video-info {
+            background: rgba(0, 198, 255, 0.1);
+        }
+
+        .video-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .video-info p {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* About Section with Floating Animation */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3.5rem;
+            background: rgba(0, 198, 255, 0.05);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 198, 255, 0.1);
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .about-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,198,255,0.05) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .about-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Audio Player with Waveform Animation */
+        .audio-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+            border-top: 1px solid rgba(0, 198, 255, 0.3);
+            transform: translateY(100%);
+            transition: transform 0.5s ease;
+        }
+
+        .audio-player.visible {
+            transform: translateY(0);
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.8rem;
+            width: 100%;
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 198, 255, 0.5);
+        }
+
+        .play-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .track-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            animation: scrollText 10s linear infinite;
+        }
+
+        @keyframes scrollText {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .track-artist {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .mute-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.6rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mute-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* Waveform Visualizer */
+        .waveform {
+            display: flex;
+            align-items: flex-end;
+            height: 40px;
+            gap: 3px;
+            margin-left: 2rem;
+        }
+
+        .wave-bar {
+            width: 4px;
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            border-radius: 2px;
+            animation: wave 1.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes wave {
+            0% { height: 20%; }
+            100% { height: 100%; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .video-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+            
+            .hero {
+                padding: 8vh 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .audio-player {
+                padding: 1rem;
+            }
+
+            .play-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+
+            .about-content {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+            }
+
+            .nav-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .social-link {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .yt-btn {
+                padding: 1rem 2rem;
+            }
+        }
+
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(0, 198, 255, 0.5);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+            z-index: 9999;
+            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+        }
+
+        .custom-cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 198, 255, 0.3);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9998;
+            transition: transform 0.4s ease, width 0.4s ease, height 0.4s ease;
+        }
+
+        .cursor-active {
+            transform: translate(-50%, -50%) scale(1.5);
+            background: rgba(252, 0, 255, 0.7);
+        }
+
+        .cursor-follower-active {
+            transform: translate(-50%, -50%) scale(0.5);
+            border-color: rgba(252, 0, 255, 0.5);
+        }
+
+        /* Scroll Indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            z-index: 999;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-follower"></div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress"></div>
+
+    <!-- Animated Background -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <header id="main-header">
+            <h1 class="logo">Cool Flow</h1>
+            <nav>
+                <button class="nav-btn active" data-section="home">Home</button>
+                <button class="nav-btn" data-section="videos">Videos</button>
+                <button class="nav-btn" data-section="about">About</button>
+            </nav>
+        </header>
+
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h2>Experience <span class="gradient-text">Cool Flow</span></h2>
+                <p>Immerse yourself in the unique soundscapes created by Cool Flow. Discover the latest tracks, videos, and more from this innovative artist.</p>
+                <a href="https://www.youtube.com/@coolflow27" target="_blank" class="yt-btn">
+                    <i class="fab fa-youtube"></i> Visit YouTube Channel
+                </a>
+                
+                <div class="social-links">
+                    <a href="https://www.facebook.com/CoolFlow27" target="_blank" class="social-link facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@cool.flow" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Videos Section -->
+        <section id="videos" class="section">
+            <h2 class="section-title">Latest <span class="gradient-text">Videos</span></h2>
+            <div class="video-grid">
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/7rF5GPmnW8I" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool Flow - Track 1</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/vTsDa1CrfcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool Flow - Track 2</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/0ID_QJmWGOA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool Flow - Track 3</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/e5qrTOu6bU0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool Flow - Track 4</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/sL5NZSae1rg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool Flow - Track 5</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <iframe src="https://www.youtube.com/embed/P06jNVR43zY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <h3>Cool Flow - Track 6</h3>
+                        <p>Official Music Video</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <h2 class="section-title">About <span class="gradient-text">Cool Flow</span></h2>
+            <div class="about-content">
+                <p>Cool Flow is an innovative music creator specializing in unique soundscapes and atmospheric compositions. With a growing following on YouTube, Cool Flow continues to push boundaries in electronic music.</p>
+                <p>The channel features a mix of original compositions, creative remixes, and immersive audio experiences that transport listeners to new dimensions.</p>
+                
+                <div class="social-links" style="margin-top: 3rem;">
+                    <a href="https://www.youtube.com/@coolflow27" target="_blank" class="social-link youtube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://www.facebook.com/CoolFlow27" target="_blank" class="social-link facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@cool.flow" target="_blank" class="social-link tiktok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Audio Player -->
+    <div class="audio-player" id="audio-player">
+        <div class="player-controls">
+            <button class="play-btn"><i class="fas fa-play"></i></button>
+            <div class="track-info">
+                <div class="track-name">Cool Flow - Background Mix</div>
+                <div class="track-artist">Click play to start music</div>
+            </div>
+            <div class="waveform" id="waveform">
+                <div class="wave-bar" style="animation-delay: 0s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.2s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.4s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.6s;"></div>
+                <div class="wave-bar" style="animation-delay: 0.8s;"></div>
+                <div class="wave-bar" style="animation-delay: 1s;"></div>
+            </div>
+            <button class="mute-btn">
+                <i class="fas fa-volume-mute"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- YouTube Player Container -->
+    <div id="youtube-player"></div>
+
+    <script>
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Create floating particles
+            const particles = document.getElementById('particles');
+            const particleCount = 50;
+            const emojis = ['🎵', '🎶', '🎧', '🎼', '🎹', '🎷', '🎺', '🔊', '🎤', '📻'];
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random properties
+                const size = Math.random() * 25 + 15;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100 + 100;
+                const delay = Math.random() * 10;
+                const duration = Math.random() * 20 + 15;
+                const rotation = Math.random() * 360;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.transform = `rotate(${rotation}deg)`;
+                particle.style.fontSize = `${size * 0.8}px`;
+                
+                // Random emoji
+                const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+                particle.textContent = randomEmoji;
+                
+                // Random color
+                const colors = ['#00c6ff', '#0072ff', '#ffffff', '#1db954', '#ff8800'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.color = randomColor;
+                
+                particles.appendChild(particle);
+            }
+
+            // Navigation
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const sections = document.querySelectorAll('.section');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+                    
+                    button.classList.add('active');
+                    const sectionId = button.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // Smooth scroll to top of section
+                    window.scrollTo({
+                        top: document.getElementById(sectionId).offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Sticky header effect
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // Scroll progress indicator
+            const scrollProgress = document.querySelector('.scroll-progress');
+            window.addEventListener('scroll', () => {
+                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrolled = (window.scrollY / scrollHeight) * 100;
+                scrollProgress.style.width = `${scrolled}%`;
+            });
+
+            // Custom cursor
+            const cursor = document.querySelector('.custom-cursor');
+            const cursorFollower = document.querySelector('.custom-cursor-follower');
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
+                setTimeout(() => {
+                    cursorFollower.style.left = e.clientX + 'px';
+                    cursorFollower.style.top = e.clientY + 'px';
+                }, 100);
+            });
+            
+            // Cursor effects on interactive elements
+            const interactiveElements = document.querySelectorAll('a, button, .video-card, .social-link, .nav-btn');
+            
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.classList.add('cursor-active');
+                    cursorFollower.classList.add('cursor-follower-active');
+                });
+                
+                el.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('cursor-active');
+                    cursorFollower.classList.remove('cursor-follower-active');
+                });
+            });
+
+            // YouTube Player API
+            let player;
+            let isPlaying = false;
+            let isMuted = true;
+
+            // Load YouTube API script
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            // Called when YouTube API is ready
+            window.onYouTubeIframeAPIReady = function() {
+                player = new YT.Player('youtube-player', {
+                    height: '0',
+                    width: '0',
+                    videoId: '1dXkhGCRPXw',
+                    playerVars: {
+                        'autoplay': 0,
+                        'controls': 0,
+                        'disablekb': 1,
+                        'fs': 0,
+                        'loop': 1,
+                        'modestbranding': 1,
+                        'playlist': '1dXkhGCRPXw'
+                    },
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            };
+
+            function onPlayerReady(event) {
+                // Player is ready, enable controls
+                document.querySelector('.play-btn').disabled = false;
+                document.getElementById('audio-player').classList.add('visible');
+                
+                // Start muted to comply with autoplay policies
+                event.target.mute();
+                isMuted = true;
+                document.querySelector('.mute-btn').innerHTML = '<i class="fas fa-volume-mute"></i>';
+            }
+
+            function onPlayerStateChange(event) {
+                updatePlayerState();
+                
+                // Show waveform animation when playing
+                const waveform = document.getElementById('waveform');
+                if (event.data === YT.PlayerState.PLAYING) {
+                    waveform.style.display = 'flex';
+                } else {
+                    waveform.style.display = 'none';
+                }
+            }
+
+            function updatePlayerState() {
+                const playBtn = document.querySelector('.play-btn');
+                const muteBtn = document.querySelector('.mute-btn');
+                
+                if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                    isPlaying = true;
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    document.querySelector('.track-artist').textContent = "Now Playing";
+                } else {
+                    isPlaying = false;
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    document.querySelector('.track-artist').textContent = "Paused";
+                }
+                
+                if (player.isMuted()) {
+                    isMuted = true;
+                    muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                } else {
+                    isMuted = false;
+                    muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                }
+            }
+
+            // Play/Pause control
+            document.querySelector('.play-btn').addEventListener('click', () => {
+                if (isPlaying) {
+                    player.pauseVideo();
+                } else {
+                    player.playVideo();
+                    // First play interaction unmutes by default
+                    if (isMuted) {
+                        player.unMute();
+                        isMuted = false;
+                        document.querySelector('.mute-btn').innerHTML = '<i class="fas fa-volume-up"></i>';
+                    }
+                }
+                updatePlayerState();
+            });
+
+            // Mute/Unmute control
+            document.querySelector('.mute-btn').addEventListener('click', () => {
+                if (isMuted) {
+                    player.unMute();
+                    isMuted = false;
+                    document.querySelector('.mute-btn').innerHTML = '<i class="fas fa-volume-up"></i>';
+                } else {
+                    player.mute();
+                    isMuted = true;
+                    document.querySelector('.mute-btn').innerHTML = '<i class="fas fa-volume-mute"></i>';
+                }
+            });
+
+            // Enable audio controls after first user interaction
+            document.body.addEventListener('click', function initAudio() {
+                document.querySelector('.play-btn').disabled = false;
+                document.body.removeEventListener('click', initAudio);
+            }, { once: true });
+
+            // Page load animation
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Add slight delay to body display for smoother load
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.5s ease';
+    </script>
+</body>
+</html>
